@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo List</title>
+    <script>
+        async function fetchTodos() {
+            const response = await fetch('/todos');
+            const todos = await response.json();
+            const list = document.getElementById('todo-list');
+            list.innerHTML = '';
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.innerText = `${todo.task} - ${todo.completed ? 'Completed' : 'Pending'}`;
+                list.appendChild(li);
+            });
+        }
+
+        async function addTodo() {
+            const task = document.getElementById('task').value;
+            const response = await fetch('/todos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ task: task, completed: false }),
+            });
+            await fetchTodos();
+        }
+
+        window.onload = fetchTodos;
+    </script>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <input type="text" id="task" placeholder="Add a new task"/>
+    <button onclick="addTodo()">Add Task</button>
+    <ul id="todo-list"></ul>
+</body>
+</html>
